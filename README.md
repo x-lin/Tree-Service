@@ -29,4 +29,4 @@ embedded web server. The local web server by default will run on port 8080. The 
 listening with base path `http://localhost:8080/tree`.
 
 ### Endpoints
-See the [Postman collection file](postman/Tree Service API documentation.postman_collection.json).
+See the [Postman collection file](postman/API_documentation.postman_collection.json).
