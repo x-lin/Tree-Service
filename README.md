@@ -8,7 +8,7 @@ Before the project can be run, the database needs to be setup. To do so:
 2. Create a user "postgres" with password "admin". If another user/pw-setup is used, the `application.properties` file
    as well as the `pom.xml` file need to be adjusted accordingly.
 3. Create the database "Tree", e.g. with the following SQL statement:
-`CREATE DATABASE "Tree"
+```CREATE DATABASE "Tree"
       WITH
       OWNER = postgres
       ENCODING = 'UTF8'
@@ -18,7 +18,8 @@ Before the project can be run, the database needs to be setup. To do so:
   
   GRANT TEMPORARY, CONNECT ON DATABASE "Tree" TO PUBLIC;
   
-  GRANT ALL ON DATABASE "Tree" TO postgres;`
+  GRANT ALL ON DATABASE "Tree" TO postgres;
+```
   
 After the database is setup accordingly, the project can be built with `mvn clean install`. This project contains a
 Maven Wrapper to run the project without Maven installed. To do so, use `./mvnw clean install` instead. Afterwards, the
