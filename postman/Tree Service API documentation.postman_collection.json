@@ -1,0 +1,158 @@
+{
+	"info": {
+		"_postman_id": "774fe943-fb39-4986-913e-2f0d752668bd",
+		"name": "Tree Service API documentation",
+		"description": "# 📄 Endpoints\n\n`This collection contains a list of endpoints used.`",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "39506232"
+	},
+	"item": [
+		{
+			"name": "Tree",
+			"item": [
+				{
+					"name": "Get Subtree",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseUrl}}/{{nodeId}}",
+						"description": "Fetches a sub tree of the whole tree with the given **nodeId** as the root of the tree."
+					},
+					"response": []
+				},
+				{
+					"name": "Add an Edge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"sourceId\": {{sourceId}},\n    \"targetId\": {{targetId}}\n}"
+						},
+						"url": "{{baseUrl}}/edges",
+						"description": "Adds an edge with the given **sourceId** and **targetId**."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete an Edge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"sourceId\": {{sourceId}},\r\n    \"targetId\": {{targetId}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/edges",
+						"description": "Delete the edge with the given **sourceId** and **targetId**."
+					},
+					"response": []
+				}
+			],
+			"description": "The endpoints for the tree service.",
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://127.0.0.1:8080/tree"
+		}
+	]
+}
