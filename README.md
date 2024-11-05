@@ -8,7 +8,8 @@ Before the project can be run, the database needs to be setup. To do so:
 2. Create a user "postgres" with password "admin". If another user/pw-setup is used, the `application.properties` file
    as well as the `pom.xml` file need to be adjusted accordingly.
 3. Create the database "Tree", e.g. with the following SQL statement:
-```CREATE DATABASE "Tree"
+```
+  CREATE DATABASE "Tree"
       WITH
       OWNER = postgres
       ENCODING = 'UTF8'
