@@ -2,6 +2,7 @@ package com.example.prewave.tree
 
 import com.example.prewave.tree.db.jooq.tables.references.EDGE
 import org.jooq.DSLContext
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
@@ -42,106 +43,115 @@ class TreeDbServiceTest(
         }
     }
 
-    @Test
-    fun when_addUnknownEdge_then_entryAddedToDb() {
-        //GIVEN
-        val sourceId = 1
-        val targetId = 2
+    @Nested
+    inner class AddEdgeTest {
+        @Test
+        fun when_addUnknownEdge_then_entryAddedToDb() {
+            //GIVEN
+            val sourceId = 1
+            val targetId = 2
 
-        //WHEN
-        this.sut.addEdge(sourceId, targetId)
+            //WHEN
+            sut.addEdge(sourceId, targetId)
 
-        //THEN
-        verifyEntryExists(sourceId, targetId)
+            //THEN
+            verifyEntryExists(sourceId, targetId)
+        }
+
+        @Test
+        fun when_addMultipleEdges_then_entriesAddedToDb() {
+            //WHEN
+            sut.addEdge(1, 2)
+            sut.addEdge(2, 3)
+            sut.addEdge(1, 4)
+
+            //THEN
+            verifyEntryExists(1, 2)
+            verifyEntryExists(2, 3)
+            verifyEntryExists(1, 4)
+        }
+
+        @Test
+        fun when_addKnownEdge_then_throwsDuplicateKeyException() {
+            //GIVEN
+            val sourceId = 1
+            val targetId = 2
+            sut.addEdge(sourceId, targetId)
+
+            //WHEN + THEN
+            assertThrows<DuplicateKeyException> { sut.addEdge(sourceId, targetId) }
+            verifyEntryExists(sourceId, targetId)
+        }
     }
 
-    @Test
-    fun when_addMultipleEdges_then_entriesAddedToDb() {
-        //WHEN
-        this.sut.addEdge(1, 2)
-        this.sut.addEdge(2, 3)
-        this.sut.addEdge(1, 4)
+    @Nested
+    inner class DeleteEdgeTest {
+        @Test
+        fun when_deleteKnownEdge_then_entryDeletedFromDb() {
+            //GIVEN
+            val sourceId = 1
+            val targetId = 2
+            sut.addEdge(sourceId, targetId)
 
-        //THEN
-        verifyEntryExists(1, 2)
-        verifyEntryExists(2, 3)
-        verifyEntryExists(1, 4)
+            //WHEN + THEN
+            sut.deleteEdge(sourceId, targetId)
+            verifyEntryDoesNotExist(sourceId, targetId)
+        }
+
+        @Test
+        fun when_deleteUnknownEdge_then_throwsEmptyResultDataAccessException() {
+            //GIVEN
+            sut.addEdge(1, 2)
+
+            //WHEN + THEN
+            assertThrows<EmptyResultDataAccessException> { sut.deleteEdge(2, 3) }
+            verifyEntryExists(1, 2)
+        }
     }
 
-    @Test
-    fun when_addKnownEdge_then_throwsDuplicateKeyException() {
-        //GIVEN
-        val sourceId = 1
-        val targetId = 2
-        this.sut.addEdge(sourceId, targetId)
+    @Nested
+    inner class GetSubtreeTest {
+        @Test
+        fun when_getTreeForLeafNode_then_returnsEmptyTree() {
+            //GIVEN
+            sut.addEdge(1, 2)
+            sut.addEdge(2, 3)
+            sut.addEdge(2, 4)
 
-        //WHEN + THEN
-        assertThrows<DuplicateKeyException> { this.sut.addEdge(sourceId, targetId) }
-        verifyEntryExists(sourceId, targetId)
-    }
+            //WHEN
+            val actual: Tree = sut.getSubTree(3)
 
-    @Test
-    fun when_deleteKnownEdge_then_entryDeletedFromDb() {
-        //GIVEN
-        val sourceId = 1
-        val targetId = 2
-        this.sut.addEdge(sourceId, targetId)
+            //THEN
+            assertEquals(Tree(3, emptyMap()), actual)
+        }
 
-        //WHEN + THEN
-        this.sut.deleteEdge(sourceId, targetId)
-        verifyEntryDoesNotExist(sourceId, targetId)
-    }
+        @Test
+        fun when_getTreeForRootNode_then_returnsWholeTree() {
+            //GIVEN
+            sut.addEdge(1, 2)
+            sut.addEdge(2, 3)
+            sut.addEdge(2, 4)
 
-    @Test
-    fun when_deleteUnknownEdge_then_throwsEmptyResultDataAccessException() {
-        //GIVEN
-        this.sut.addEdge(1, 2)
+            //WHEN
+            val actual: Tree = sut.getSubTree(1)
 
-        //WHEN + THEN
-        assertThrows<EmptyResultDataAccessException> { this.sut.deleteEdge(2, 3) }
-        verifyEntryExists(1, 2)
-    }
+            //THEN
+            assertEquals(Tree(1, mapOf(1 to setOf(2), 2 to setOf(3, 4))), actual)
+        }
 
-    @Test
-    fun when_getTreeForLeafNode_then_returnsEmptyTree() {
-        //GIVEN
-        this.sut.addEdge(1, 2)
-        this.sut.addEdge(2, 3)
-        this.sut.addEdge(2, 4)
+        @Test
+        fun when_getTreeForBranchNode_then_returnsNonEmptySubTree() {
+            //GIVEN
+            sut.addEdge(1, 2)
+            sut.addEdge(2, 3)
+            sut.addEdge(2, 4)
 
-        //WHEN
-        val actual: Tree = this.sut.getSubTree(3)
+            //WHEN
+            val actual: Tree = sut.getSubTree(2)
 
-        //THEN
-        assertEquals(Tree(3, emptyMap()), actual)
-    }
-
-    @Test
-    fun when_getTreeForRootNode_then_returnsWholeTree() {
-        //GIVEN
-        this.sut.addEdge(1, 2)
-        this.sut.addEdge(2, 3)
-        this.sut.addEdge(2, 4)
-
-        //WHEN
-        val actual: Tree = this.sut.getSubTree(1)
-
-        //THEN
-        assertEquals(Tree(1, mapOf(1 to setOf(2), 2 to setOf(3, 4))), actual)
-    }
-
-    @Test
-    fun when_getTreeForBranchNode_then_returnsNonEmptySubTree() {
-        //GIVEN
-        this.sut.addEdge(1, 2)
-        this.sut.addEdge(2, 3)
-        this.sut.addEdge(2, 4)
-
-        //WHEN
-        val actual: Tree = this.sut.getSubTree(2)
-
-        //THEN
-        assertEquals(Tree(2, mapOf(2 to setOf(3, 4))), actual)
+            //THEN
+            assertEquals(Tree(2, mapOf(2 to setOf(3, 4))), actual)
+        }
     }
 
     private fun verifyEntryExists(sourceId: Int, targetId: Int) {
