@@ -82,4 +82,4 @@ class TreeDbService(@Autowired private val dslContext: DSLContext) {
     }
 }
 
-private data class DbEdge(val fromId: Int, val toId: Int)
+data class DbEdge(val fromId: Int, val toId: Int)
